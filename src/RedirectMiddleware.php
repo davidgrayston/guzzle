@@ -83,7 +83,7 @@ class RedirectMiddleware
             return $response;
         }
 
-        $this->guardMax($request, $options);
+        $this->guardMax($request, $response, $options);
         $nextRequest = $this->modifyRequest($request, $options, $response);
 
         if (isset($options['allow_redirects']['on_redirect'])) {
@@ -135,7 +135,7 @@ class RedirectMiddleware
      *
      * @throws TooManyRedirectsException Too many redirects.
      */
-    private function guardMax(RequestInterface $request, array &$options): void
+    private function guardMax(RequestInterface $request, ResponseInterface $response, array &$options): void
     {
         $current = isset($options['__redirect_count'])
             ? $options['__redirect_count']
@@ -146,7 +146,8 @@ class RedirectMiddleware
         if ($options['__redirect_count'] > $max) {
             throw new TooManyRedirectsException(
                 "Will not follow more than {$max} redirects",
-                $request
+                $request,
+                $response
             );
         }
     }

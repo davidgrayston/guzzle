@@ -66,8 +66,6 @@ class StreamHandler
                 || false !== \strpos($message, "connection attempt failed")
             ) {
                 $e = new ConnectException($e->getMessage(), $request, $e);
-            } else {
-                $e = RequestException::wrapException($request, $e);
             }
             $this->invokeStats($options, $request, $startTime, null, $e);
 
