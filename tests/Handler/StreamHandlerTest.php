@@ -297,7 +297,7 @@ class StreamHandlerTest extends TestCase
 
     public function testVerifiesVerifyIsValidIfPath()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('SSL CA bundle not found: /does/not/exist');
 
         $this->getSendResult(['verify' => '/does/not/exist']);
@@ -311,7 +311,7 @@ class StreamHandlerTest extends TestCase
 
     public function testVerifiesCertIfValidPath()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('SSL certificate not found: /does/not/exist');
 
         $this->getSendResult(['cert' => '/does/not/exist']);
