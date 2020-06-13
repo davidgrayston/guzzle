@@ -631,6 +631,21 @@ class CurlFactoryTest extends TestCase
         $promise->wait();
     }
 
+    public function testRejectsPromiseWhenOnHeadersFailsWithoutResponse()
+    {
+        $factory = new Handler\CurlFactory(1);
+
+        $easy = $factory->create(new Psr7\Request('GET', Server::$url), []);
+        $easy->onHeadersException = new \Exception('test');
+        $easy->errno = CURLE_COULDNT_CONNECT;
+
+        $promise = Handler\CurlFactory::finish(function () {}, $easy, $factory);
+
+        $this->expectException(\GuzzleHttp\Exception\ConnectException::class);
+        $this->expectExceptionMessage('An error was encountered during the on_headers event');
+        $res = $promise->wait();
+    }
+
     public function testSuccessfullyCallsOnHeadersBeforeWritingToSink()
     {
         Server::flush();

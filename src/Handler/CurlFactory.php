@@ -170,15 +170,13 @@ class CurlFactory implements CurlFactoryInterface
         // If an exception was encountered during the onHeaders event, then
         // return a rejected promise that wraps that exception.
         if ($easy->onHeadersException) {
-            return \GuzzleHttp\Promise\rejection_for(
-                new RequestException(
-                    'An error was encountered during the on_headers event',
-                    $easy->request,
-                    $easy->response,
-                    $easy->onHeadersException,
-                    $ctx
-                )
-            );
+            $message = 'An error was encountered during the on_headers event';
+
+            $error = $easy->response === null
+                ? new ConnectException($message, $easy->request, $easy->onHeadersException, $ctx)
+                : new RequestException($message, $easy->request, $easy->response, $easy->onHeadersException, $ctx);
+
+            return \GuzzleHttp\Promise\rejection_for($error);
         }
         if (\version_compare($ctx[self::CURL_VERSION_STR], self::LOW_CURL_VERSION_NUMBER)) {
             $message = \sprintf(
